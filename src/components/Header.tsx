@@ -77,11 +77,6 @@ export function Header() {
           <Plus size={16} />
           <span>New page</span>
         </Button>
-        {mode === 'edit' && data.pages.length > 1 && (
-          <Button size="sm" variant="ghost" onClick={handleDeletePage} aria-label="Delete current page">
-            <Trash2 size={16} />
-          </Button>
-        )}
       </div>
 
       <div className="header-actions">
@@ -100,7 +95,17 @@ export function Header() {
             Save
           </Button>
         )}
-        <Button variant="danger" onClick={handleClear}>
+        <Button
+          variant="danger"
+          onClick={handleDeletePage}
+          disabled={data.pages.length <= 1}
+          aria-label="Delete current page"
+          title={data.pages.length <= 1 ? 'Keep at least one page; add another page before deleting this one' : `Delete “${activePage.title}”`}
+        >
+          <Trash2 size={16} />
+          <span>Delete page</span>
+        </Button>
+        <Button variant="danger" onClick={handleClear} aria-label="Clear all data">
           <Trash2 size={16} />
           <span>Clear data</span>
         </Button>

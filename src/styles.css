@@ -130,7 +130,7 @@ select:focus-visible {
 
 .page-switcher {
   display: grid;
-  grid-template-columns: minmax(140px, 1fr) auto auto;
+  grid-template-columns: minmax(140px, 1fr) auto;
   align-items: center;
   gap: 8px;
 }
@@ -277,6 +277,7 @@ select:focus-visible {
 
 .header-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   align-self: center;
   justify-content: flex-end;
@@ -1336,7 +1337,7 @@ select:focus-visible {
   }
 
   .page-switcher {
-    grid-template-columns: minmax(110px, 1fr) auto auto;
+    grid-template-columns: minmax(110px, 1fr) auto;
   }
 
   .page-switcher .button span,
