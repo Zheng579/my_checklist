@@ -5,7 +5,10 @@ import { PageGrid } from './components/PageGrid';
 import { useChecklistStore } from './store/checklistStore';
 
 export default function App() {
-  const backgroundColor = useChecklistStore((state) => state.data.backgroundColor);
+  const backgroundColor = useChecklistStore((state) => {
+    const page = state.data.pages.find((item) => item.id === state.data.activePageId) ?? state.data.pages[0];
+    return page.backgroundColor;
+  });
   const mode = useChecklistStore((state) => state.mode);
   const dirty = useChecklistStore((state) => state.dirty);
 

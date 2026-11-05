@@ -16,6 +16,7 @@ Use `npm.cmd run build` for a production build and `npm.cmd run check` for the T
 - `src/store/checklistStore.ts` owns application state, LocalStorage writes, and view/edit save semantics.
 - `src/data/tree.ts` contains immutable hierarchy operations such as checkbox propagation, stable completed-item sorting, highlighting, and sibling reordering.
 - `src/data/defaults.ts` and `src/data/themes.ts` contain starter content and theme definitions.
+- `src/data/migrations.ts` initializes saved layouts and migrates the old shared background to individual page colors without losing checklist data.
 - `src/data/sectionSizing.ts` defines content-fitting height rules; `src/hooks/useSectionAutoHeight.ts` measures rendered content and applies those rules.
 - `src/data/gridLayout.ts` owns explicit grid coordinates, open-space placement, collision checks, and growth spacing. Existing LocalStorage data receives initial positions automatically.
 - `src/data/sectionCopy.ts` creates independent section duplicates with fresh checklist IDs and available grid positions.
@@ -24,6 +25,8 @@ Use `npm.cmd run build` for a production build and `npm.cmd run check` for the T
 - `src/styles.css` contains the responsive ten-column grid and component-level styling; Tailwind is wired through Vite for utility use and future extension.
 
 Edit-mode changes remain in memory until **Save** is selected. View-mode actions such as checking, highlighting, or expanding an item are persisted immediately. The app warns before unloading while edit-mode changes are unsaved.
+
+Each checklist page has its own background color. Layout Studio previews and updates only the active page; new pages start white. Older saved pages inherit their former shared background on load, after which their colors are independent.
 
 Containers grow in 10% steps only when their content exceeds the current height. Their Add item footer remains pinned to the bottom. Desktop positions support deliberate gaps and vertically stacked cards; mobile shows a readable single-column layout while retaining those saved positions.
 

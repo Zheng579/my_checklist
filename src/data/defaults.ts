@@ -1,5 +1,7 @@
 import type { ChecklistData, ChecklistItem, ChecklistLevel, Section } from '../types';
 
+export const DEFAULT_PAGE_BACKGROUND = '#FFFFFF';
+
 export const makeId = () =>
   globalThis.crypto?.randomUUID?.() ?? `item-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
@@ -66,8 +68,7 @@ export const createDefaultData = (): ChecklistData => {
   return {
     version: 1,
     activePageId: pageId,
-    backgroundColor: '#FFFFFF',
     theme: 'custom',
-    pages: [{ id: pageId, title: 'My checklist', sections: [today, project, notes] }],
+    pages: [{ id: pageId, title: 'My checklist', backgroundColor: DEFAULT_PAGE_BACKGROUND, sections: [today, project, notes] }],
   };
 };

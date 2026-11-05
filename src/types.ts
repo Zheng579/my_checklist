@@ -28,13 +28,13 @@ export interface Section {
 export interface ChecklistPage {
   id: string;
   title: string;
+  backgroundColor: string;
   sections: Section[];
 }
 
 export interface ChecklistData {
   version: 1;
   activePageId: string;
-  backgroundColor: string;
   theme: ThemeName;
   pages: ChecklistPage[];
 }

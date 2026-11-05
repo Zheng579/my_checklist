@@ -11,7 +11,7 @@ export function EditToolbar() {
   const copiedSection = useChecklistStore((state) => state.copiedSection);
   const pasteSection = useChecklistStore((state) => state.pasteSection);
   const [pasted, setPasted] = useState(false);
-  const setBackgroundColor = useChecklistStore((state) => state.setBackgroundColor);
+  const setPageBackgroundColor = useChecklistStore((state) => state.setPageBackgroundColor);
   const activePage = data.pages.find((page) => page.id === data.activePageId) ?? data.pages[0];
 
   const handleAddSection = () => {
@@ -33,9 +33,10 @@ export function EditToolbar() {
 
       <div className="toolbar-actions">
         <ColorPickerDialog
+          key={activePage.id}
           label="Page background"
-          value={data.backgroundColor}
-          onChange={setBackgroundColor}
+          value={activePage.backgroundColor}
+          onChange={(color) => setPageBackgroundColor(activePage.id, color)}
         />
         <Button
           onClick={handlePasteSection}

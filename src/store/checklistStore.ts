@@ -1,28 +1,24 @@
 import { create } from 'zustand';
-import { createDefaultData, createItem, createSection, makeId } from '../data/defaults';
+import { createDefaultData, createItem, createSection, DEFAULT_PAGE_BACKGROUND, makeId } from '../data/defaults';
 import { removeItem, reorderSiblings, toggleHighlightSubtree, toggleItemChecked, updateItem } from '../data/tree';
 import { themePresets } from '../data/themes';
 import { fitSectionHeight } from '../data/sectionSizing';
 import { duplicateSection } from '../data/sectionCopy';
-import { findNearestOpenPosition, findOpenPosition, gridSpan, initializeSectionPositions, makeRoomForSection } from '../data/gridLayout';
+import { findNearestOpenPosition, findOpenPosition, gridSpan, makeRoomForSection } from '../data/gridLayout';
+import { initializeChecklistData, type StoredChecklistData } from '../data/migrations';
 import type { ChecklistData, ChecklistItem, Section, ThemeName } from '../types';
 
 const STORAGE_KEY = 'checklist-manager:v1';
 
-const initializeLayout = (data: ChecklistData): ChecklistData => ({
-  ...data,
-  pages: data.pages.map((page) => ({ ...page, sections: initializeSectionPositions(page.sections) })),
-});
-
 const loadData = (): ChecklistData => {
   try {
     const value = localStorage.getItem(STORAGE_KEY);
-    if (!value) return initializeLayout(createDefaultData());
-    const parsed = JSON.parse(value) as ChecklistData;
-    if (parsed.version !== 1 || !parsed.pages?.length) return initializeLayout(createDefaultData());
-    return initializeLayout(parsed);
+    if (!value) return initializeChecklistData(createDefaultData());
+    const parsed = JSON.parse(value) as StoredChecklistData;
+    if (parsed.version !== 1 || !parsed.pages?.length) return initializeChecklistData(createDefaultData());
+    return initializeChecklistData(parsed);
   } catch {
-    return initializeLayout(createDefaultData());
+    return initializeChecklistData(createDefaultData());
   }
 };
 
@@ -40,7 +36,7 @@ interface StoreState {
   addPage: (title: string) => void;
   deleteActivePage: () => void;
   clearAll: () => void;
-  setBackgroundColor: (color: string) => void;
+  setPageBackgroundColor: (pageId: string, color: string) => void;
   applyTheme: (sectionId: string, theme: Exclude<ThemeName, 'custom'>) => void;
   addSection: (title: string) => void;
   copySection: (sectionId: string) => boolean;
@@ -123,7 +119,7 @@ export const useChecklistStore = create<StoreState>((set, get) => {
         return {
           ...data,
           activePageId: pageId,
-          pages: [...data.pages, { id: pageId, title, sections: [] }],
+          pages: [...data.pages, { id: pageId, title, backgroundColor: DEFAULT_PAGE_BACKGROUND, sections: [] }],
         };
       }),
     deleteActivePage: () =>
@@ -134,10 +130,13 @@ export const useChecklistStore = create<StoreState>((set, get) => {
       }),
     clearAll: () => {
       localStorage.removeItem(STORAGE_KEY);
-      set({ data: initializeLayout(createDefaultData()), mode: 'view', dirty: false, copiedSection: null });
+      set({ data: initializeChecklistData(createDefaultData()), mode: 'view', dirty: false, copiedSection: null });
     },
-    setBackgroundColor: (backgroundColor) =>
-      updateData((data) => ({ ...data, backgroundColor })),
+    setPageBackgroundColor: (pageId, backgroundColor) =>
+      updateData((data) => ({
+        ...data,
+        pages: data.pages.map((page) => page.id === pageId ? { ...page, backgroundColor } : page),
+      })),
     applyTheme: (sectionId, themeName) =>
       updateData((data) => {
         const theme = themePresets.find((item) => item.id === themeName);
